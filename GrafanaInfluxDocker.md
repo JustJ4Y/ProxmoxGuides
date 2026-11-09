@@ -88,7 +88,7 @@ InfluxDB im Browser öffnen unter Port 8086
 | Organization   | homelab        |
 | Bucket         | proxmox        |  
 
-Den initialen Token speichern. Fuer Proxmox spaeter einen eigenen Write-Token erstellen.
+Den initialen Token speichern. Für Proxmox später einen eigenen Write-Token erstellen.
 
 ### Grafana Data Source einrichten:
 Grafana im Browser öffnen unter Port 3000  
@@ -102,7 +102,84 @@ Standardloging ist admin/admin
 | Default Bucket | proxmox                      |
 | Token          | Grafana-Token hier einsetzen |  
 
-Erfolgreicher Test: Data source is working. 3 buckets found
+Erfolgreicher Test: ```Data source is working. 3 buckets found```
 
+### Proxmox Write-Token in InfluxDB erstellen:
+In InfluxDB: Load Data -> API Tokens -> Generate API Token -> Custom API Token
 
+| Feld           | Wert           |
+| -------------- |----------------|
+| Name           | proxmox-write  |
+| Bucket         | proxmox        |
+| Rechte         | Read, Write    |  
 
+Den Token komplett kopieren und speichern.
+
+### Proxmox Metric Server einrichten:
+
+| Feld           | Wert                       |
+| -------------- |----------------------------|
+| Name           | influxdb                   |
+| Port           | 8086                       |
+| Organization   | homelab                    |
+| Bucket         | proxmox                    |
+| Token          | Write-Token hier einsetzen |  
+
+### Auf Proxmox Host testen:
+```
+cat /etc/pve/status.cfg
+```
+```
+journalctl -u pvestatd -f
+```
+### CPU Query in Grafana erstellen:
+```
+from(bucket: "proxmox")
+ |> range(start: -1h)
+ |> filter(fn: (r) => r["vmid"] =~ /^(100|101|102|103|105|106|107|108|109)$/)
+ |> filter(fn: (r) => r["_field"] == "cpu")
+ |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+ |> map(fn: (r) => ({
+ r with
+ _value: r._value * 100.0,
+ _field:
+ if r.vmid == "100" then "Server 0"
+ else if r.vmid == "101" then "Server 1"
+ else if r.vmid == "102" then "Server 2"
+ else if r.vmid == "103" then "Server 3"
+ else if r.vmid == "105" then "Server 4"
+ else if r.vmid == "106" then "Server 5"
+ else if r.vmid == "107" then "Server 6"
+ else if r.vmid == "108" then "Server 7"
+ else if r.vmid == "109" then "Server 8"
+ else "Unbekannt"
+ }))
+ |> keep(columns: ["_time", "_value", "_field"])
+ |> group(columns: ["_field"])
+ |> yield(name: "CPU Dienste")
+```
+### RAM Query in Grafana erstellen:
+```
+from(bucket: "proxmox")
+ |> range(start: -1h)
+ |> filter(fn: (r) => r["vmid"] =~ /^(100|101|102|103|105|106|107|108|109)$/)
+ |> filter(fn: (r) => r["_field"] == "mem")
+ |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+ |> map(fn: (r) => ({
+ r with
+ _field:
+ if r.vmid == "100" then "Server 0"
+ else if r.vmid == "101" then "Server 1"
+ else if r.vmid == "102" then "Server 2"
+ else if r.vmid == "103" then "Server 3"
+ else if r.vmid == "105" then "Server 4"
+ else if r.vmid == "106" then "Server 5"
+ else if r.vmid == "107" then "Server 6"
+ else if r.vmid == "108" then "Server 7"
+ else if r.vmid == "109" then "Server 8"
+ else "Unbekannt"
+ }))
+ |> keep(columns: ["_time", "_value", "_field"])
+ |> group(columns: ["_field"])
+ |> yield(name: "RAM Dienste")
+```
