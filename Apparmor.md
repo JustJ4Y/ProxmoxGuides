@@ -1,11 +1,11 @@
-### Probleme mit Docker und Apparmor
+## Probleme mit Docker und Apparmor
 Falls Docker im LXC nicht will einfach das hier Mal probieren:
 
-# Auf Proxmox Host:  
+### Auf Proxmox Host:  
 ```
 nano /etc/pve/lxc/containernummer.conf
 ```  
-# Der config hinzufügen:  
+### Der config hinzufügen:  
 ```
 lxc.apparmor.profile: unconfined  
 lxc.mount.entry: /dev/null sys/module/apparmor/parameters/enabled none  
