@@ -12,10 +12,10 @@ apt update && apt upgrade -y
 ```
 apt install wireguard iptables -y
 ```
-### Konfig erstellen lassen:
-```
-www.wireguardconfig.com
-```
+### Konfig erstellen lassen:  
+
+https://www.wireguardconfig.com
+
 (Auf richtigen Endpoint achten und gewünschten Port setzen)
 ### Wireguard Konfiguration bearbeiten:
 ```
