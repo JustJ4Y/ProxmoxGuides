@@ -3,7 +3,7 @@ Ein kleiner Guide wie man eine Netzwerkfreigabe mit Samba erstellt
 
 ### Container erstellen:
 ```
-LXC - Ubuntu 24.04 (Privileged)
+LXC - Ubuntu 24.04 (Unprivileged)
 ```
 ### Auf Container:
 ```
