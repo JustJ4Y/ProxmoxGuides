@@ -12,7 +12,7 @@ apt update && apt upgrade -y
 ```
 apt install wireguard iptables -y
 ```
-### Konfig erstellen lassen:  
+### Konfiguration erstellen lassen:  
 
 https://www.wireguardconfig.com
 
