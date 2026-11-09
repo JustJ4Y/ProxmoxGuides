@@ -80,24 +80,29 @@ docker compose up -d
 docker ps
 ```
 ### InfluxDB einrichten:
-InfluxDB im Browser öffnen unter Port 8086  
+InfluxDB im Browser öffnen unter Port 8086 
+
 | Feld           | Wert           |
 | -------------- |----------------|
 | Username       | admin          |
 | Organization   | homelab        |
-| Bucket         | proxmox        |
+| Bucket         | proxmox        |  
+
 Den initialen Token speichern. Fuer Proxmox spaeter einen eigenen Write-Token erstellen.
 
 ### Grafana Data Source einrichten:
 Grafana im Browser öffnen unter Port 3000  
 Standardloging ist admin/admin
+
 | Feld           | Wert                         |
 | -------------- |------------------------------|
 | Query language | Flux                         |
 | URÖ            | http://influxdb:8086         |
 | Organization   | homelab                      |
 | Default Bucket | proxmox                      |
-| Token          | Grafana-Token hier einsetzen |
+| Token          | Grafana-Token hier einsetzen |  
+
 Erfolgreicher Test: Data source is working. 3 buckets found
+
 
 
