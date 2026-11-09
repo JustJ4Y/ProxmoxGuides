@@ -16,16 +16,16 @@ apt install wireguard iptables -y
 ```
 www.wireguardconfig.com
 ```
-(Auf richtigen Endpoint und Port achten)
-### Wireguard Konfig bearbeiten:
+(Auf richtigen Endpoint achten und gewünschten Port setzen)
+### Wireguard Konfiguration bearbeiten:
 ```
 nano /etc/wireguard/wg0.conf
 ```
-### Server Config einfügen und das hinzufügen über ```PostUP = iptables```:
+### Server Konfiguration einfügen und das hinzufügen über ```PostUP = iptables```:
 ```
 PostUp = sysctl -w net.ipv4.ip_forward=1
 ```
-### Testen:
+### Port im Router forwarden und Dienst starten:
 ```
 wg-quick up wg0
 ```
@@ -38,4 +38,7 @@ wg
 ```
 systemctl enable wg-quick@wg0
 ```
-Wenns nicht läuft, eventuell KI fragen, kann viele Gründe haben.
+Wenns nicht läuft oder zwischendurch nicht weitergeht, eventuell KI fragen, kann viele Gründe haben. Aber schaut euch gerne die Firewallregeln an und ob bei Endpoint und Port alles richtig gesetzt wurde. Die ufw von Ubuntu kann auch manchmal dazwischen funken. Dann probiert:
+```
+ufw allow Portnummer
+```
