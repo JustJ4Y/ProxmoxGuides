@@ -3,7 +3,7 @@ Falls ihr Dienste von außen erreichen wollte, ohne sie dem Internet zu öffnen,
 
 ### Container erstellen:
 ```
-LXC - Ubuntu 24.04 (Privileged)
+LXC - Ubuntu 24.04 (Unprivileged)
 ```
 ### Auf Container:
 ```
