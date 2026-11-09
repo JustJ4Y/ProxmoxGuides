@@ -35,15 +35,15 @@ sudo nano /etc/samba/smb.conf
 ### Unten hinzufügen:
 ```
 [sambashare]  
-path = /sambashare  
-read only = no  
-browsable = yes
+(>) path = /sambashare  
+(>) read only = no  
+(>) browsable = yes
 ```
 ### Danach:
 ```
 systemctl restart smb
 ```
-### Wenn nicht funktioniert, Berechtigung und Firewall checken:
+### Wenns noch nicht funktioniert, Berechtigung und Firewall checken:
 ```
 chmod 755 sambashare
 ```
