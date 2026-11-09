@@ -98,11 +98,11 @@ systemctl enable <Servicename>
 ```
 nano /etc/ImageMagick-6/policy.xml
 ```
-
-### Diese Zeile auskommentieren mit ``` <!-- -->```:
+Diese Zeile auskommentieren mit ``` <!-- -->```:  
 ```
 <policy domain="path" rights="none" pattern="@*"/>
 ```
+### Neustarten
 ```
 systemctl restart scanservjs
 ```
