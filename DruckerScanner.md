@@ -94,4 +94,16 @@ Webinterface für Scanner erreichbar unter Port 8080.
 ```
 systemctl enable <Servicename>
 ```
+### Falls PDF Scans nicht funktionieren:
+```
+nano /etc/ImageMagick-6/policy.xml
+```
+
+### Diese Zeile auskommentieren mit ``` <!-- -->```:
+```
+<policy domain="path" rights="none" pattern="@*"/>
+```
+```
+systemctl restart scanservjs
+```
 Fertig, es sollte alles laufen, viel Spaß
