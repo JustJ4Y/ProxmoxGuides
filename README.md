@@ -5,6 +5,12 @@ Ganz ohne Vorwissen könnten das ein oder andere schwierig sein, aber alles ist 
 ```
 sudo apt update && sudo apt upgrade -y
 ```
+### Für alle Container gilt:
+```
+nesting = 1
+keyctl = 1
+Feste IP Adresse
+```
 Für jedes Thema gibt es eine eigene .md Datei.  
 Die Guides bauen nicht aufeinander auf, also sucht euch ruhig was aus, man muss nicht alles installieren.  
 Also viel Spaß beim basteln und Troubleshooting.
