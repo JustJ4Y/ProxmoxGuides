@@ -1,4 +1,4 @@
-# HP C4400 als Netzwerkdrucker/Scanner über Proxmox 9.2.3
+# HP C4400 als Netzwerkdrucker/Scanner
 Einen alten Drucker/Scanner Netzwerkfähig machen mit CUPS und ScanservJS  
 
 ### Container erstellen:
