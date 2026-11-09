@@ -6,7 +6,9 @@ Einen alten Drucker/Scanner Netzwerkfähig machen mit CUPS und ScanservJS
 LXC - Ubuntu 24.04 (Privileged)
 ```
 ### Auf Proxmox Host:
-```lsusb```  
+```
+lsusb
+```  
 Drucker sollte hier gelistet werden. 
 ### Dann Container bearbeiten:
 ```
