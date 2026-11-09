@@ -1,4 +1,4 @@
-### VPN Dienst mit Wireguard
+# VPN Dienst mit Wireguard
 Falls ihr Dienste von außen erreichen wollte, ohne sie dem Internet zu öffnen, benutzt ihr am besten einen VPN.
 
 ### Container erstellen:
