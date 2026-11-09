@@ -35,9 +35,9 @@ sudo nano /etc/samba/smb.conf
 ### Unten hinzufügen:
 ```
 [sambashare]  
-(>) path = /sambashare  
-(>) read only = no  
-(>) browsable = yes
+ path = /sambashare  
+ read only = no  
+ browsable = yes
 ```
 ### Danach:
 ```
