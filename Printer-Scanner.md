@@ -1,6 +1,6 @@
-#HP C4400 als Netzwerkdrucker/Scanner über Proxmox 9.2.3
+# HP C4400 als Netzwerkdrucker/Scanner über Proxmox 9.2.3
 
-##LXC - Ubuntu 24.04 (Privileged)
+## LXC - Ubuntu 24.04 (Privileged)
 
 Auf Proxmox Host:
 ```lsusb```
