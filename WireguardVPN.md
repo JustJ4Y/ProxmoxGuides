@@ -16,7 +16,7 @@ apt install wireguard iptables -y
 
 https://www.wireguardconfig.com
 
-(Auf richtigen Endpoint achten und gewünschten Port setzen)
+(Auf richtigen Endpoint achten und eventuell gewünschten Port setzen)
 ### Wireguard Konfiguration bearbeiten:
 ```
 nano /etc/wireguard/wg0.conf
