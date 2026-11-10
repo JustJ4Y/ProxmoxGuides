@@ -13,4 +13,5 @@ Feste IP Adresse
 ```
 Für jedes Thema gibt es eine eigene .md Datei.  
 Die Guides bauen nicht aufeinander auf, also sucht euch ruhig was aus, man muss nicht alles installieren.  
+Falls ihr noch nicht sicher mit Linux Befehlen seid, guckt gerne in die ```Befehle.md```.  
 Also viel Spaß beim basteln und Troubleshooting.
