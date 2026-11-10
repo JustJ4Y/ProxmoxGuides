@@ -9,75 +9,48 @@ LXC - Ubuntu 24.04 (Unprivileged)
 ```
 apt update && apt upgrade -y
 ```
+```
+apt install curl -y
+```
 ### Docker installieren:
-Falls es Probleme bei diesem Schritt gibt, schaut Mal in den ```DockerApparmor.ad``` Guide
+Falls es später Probleme mit Docker gibt, schaut Mal in den ```DockerApparmor.ad``` Guide
 ```
-apt install -y ca-certificates curl gnupg lsb-release
+curl -sSL https://get.docker.com | sh
 ```
-```
-install -m 0755 -d /etc/apt/keyrings
-```
-```
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-```
-```
-chmod a+r /etc/apt/keyrings/docker.asc
-```
-```
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu apt update
-```
-```
-apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-```
-```
-systemctl enable --now docker
-```
-### Docker testen und Docker Compose Datei erstellen:
-```
-docker --version
-```
-```
-mkdir -p ~/monitoring
-```
-```
-cd ~/monitoring
-```
+### Docker Compose Datei erstellen:
 ```
 nano docker-compose.yml
 ```
-### In Datei einfügen:
+### In Konfiguration einfügen:
 ```
-services:  
- influxdb:  
- image: influxdb:2  
- container_name: influxdb  
- restart: unless-stopped  
- ports:  
- - "8086:8086"  
- volumes:  
- - influxdb-data:/var/lib/influxdb2  
- - influxdb-config:/etc/influxdb2  
- grafana:  
- image: grafana/grafana:latest  
- container_name: grafana  
- restart: unless-stopped  
- ports:  
- - "3000:3000"  
- volumes:  
- - grafana-data:/var/lib/grafana  
- depends_on:  
- - influxdb  
-volumes:  
- influxdb-data:  
- influxdb-config:  
- grafana-data:  
+services:
+  influxdb:
+    image: influxdb:2
+    container_name: influxdb
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+      - influxdb-config:/etc/influxdb2
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - influxdb
+volumes:
+  influxdb-data:
+  influxdb-config:
+  grafana-data:
 ```
-### Docker starten und Status checken:
+### Docker starten:
 ```
 docker compose up -d
-```
-```
-docker ps
 ```
 ### InfluxDB einrichten:
 InfluxDB im Browser öffnen unter Port 8086 
