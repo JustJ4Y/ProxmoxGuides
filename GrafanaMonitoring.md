@@ -65,15 +65,17 @@ Den initialen Token speichern. Für Proxmox später einen eigenen Write-Token er
 
 ### Grafana Data Source einrichten:
 Grafana im Browser öffnen unter Port 3000  
-Standardloging ist admin/admin
+Standardloging ist admin/admin  
+In Grafana: Connections -> Data sources -> Add data source -> InfluxDB
 
 | Feld           | Wert                         |
 | -------------- |------------------------------|
 | Query language | Flux                         |
-| URÖ            | http://influxdb:8086         |
+| URL            | http://influxdb:8086         |
 | Organization   | homelab                      |
+| Token          | Grafana-Token hier einsetzen | 
 | Default Bucket | proxmox                      |
-| Token          | Grafana-Token hier einsetzen |  
+
 
 Erfolgreicher Test: ```Data source is working. 3 buckets found```
 
@@ -89,22 +91,18 @@ In InfluxDB: Load Data -> API Tokens -> Generate API Token -> Custom API Token
 Den Token komplett kopieren und speichern.
 
 ### Proxmox Metric Server einrichten:
+In Proxmox: Datacenter -> Metric Server -> Add -> InfluxDB
 
 | Feld           | Wert                       |
 | -------------- |----------------------------|
 | Name           | influxdb                   |
+| Server         | IP-Adresse vom LXC         |
 | Port           | 8086                       |
+| Protokoll      | http                       |
 | Organization   | homelab                    |
 | Bucket         | proxmox                    |
 | Token          | Write-Token hier einsetzen |  
 
-### Auf Proxmox Host testen:
-```
-cat /etc/pve/status.cfg
-```
-```
-journalctl -u pvestatd -f
-```
 ### CPU Query in Grafana erstellen:
 ```
 from(bucket: "proxmox")
