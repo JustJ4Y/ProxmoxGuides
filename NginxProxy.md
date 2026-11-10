@@ -10,15 +10,12 @@ LXC - Ubuntu 24.04 (Unprivileged)
 apt update && apt upgrade -y
 ```
 ```
-apt install curl
+apt install curl -y
 ```
 ### Docker installieren:
 Falls es Probleme bei diesem Schritt gibt, schaut Mal in den ```DockerApparmor.ad``` Guide
 ```
 curl -sSL https://get.docker.com | sh
-```
-```
-apt install docker-compose
 ```
 ### Docker Compose Datei erstellen:
 ```
