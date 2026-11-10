@@ -26,7 +26,7 @@ Ein paar Befehle von den Linuxbasics bis zu Proxmox und Docker
 | ip a           | IP-Adressen anzeigen                                      |
 | top            | Systemauslastung                                          |
 | ps aux         | Laufende Prozesse anzeigen                                |
-| lsblk          | Festplattenpartitionen anzeigen                           |
+| lsblk          | Blockgeräte, Festplatten und Partitionen anzeigen         |
 | reboot         | System Neustarten                                         |
 
 
@@ -39,7 +39,7 @@ Ein paar Befehle von den Linuxbasics bis zu Proxmox und Docker
 | useradd        | User erstellen (-m für Home, -s /bin/bash für die Shell)  |
 | passwd         | Passwort ändern                                           |
 | userdel        | Benutzer löschen (am besten alles mit -r)                 |
-| users          | Auflisten aller Benutzer                                  |
+| usermod        | Benutzer bearbeiten (zB. Gruppenzugehörigkeit)            |
 | su             | Benutzer wechseln                                         |
 | id             | Benutzerinformationen anzeigen                            |
 
@@ -48,11 +48,12 @@ Ein paar Befehle von den Linuxbasics bis zu Proxmox und Docker
 | Befehl         | Funktion                                                  |
 | -------------- |-----------------------------------------------------------|
 | systemctl      | Systemdienste (start, stop, status, restart)              |
+| journalctl     | Systemmeldungen und Logs anzeigen und verfolgen           |
 | qm             | Virtuelle Maschinen (list, start, config, destroy)        |
 | pct            | LXC-Container Funktionen (list, start, stop, destroy)     |
 | pct enter      | Öffnet eine Shell im LXC Container                        |
 | docker ps      | Listet laufende Docker-Container auf                      |
-| docker compose | Docker Compose (up -d zum Starten, pull zum Updaten)      |
+| docker compose | Docker Compose (up -d zum Starten, pull für neues Image)  |
 
 ### Wichtige Verzeichnisse und Konfigurationsdateien
 
