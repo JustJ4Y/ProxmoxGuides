@@ -1,5 +1,5 @@
 # Proxmox Monitoring mit Grafana
-Guide zum erstellen eines LXC Containers mit Docker auf dem InfluxDB 2 und Grafana
+Guide zum erstellen eines Grafana LXC Containers mit Hilfe von InfluxDB 2 und Docker
 
 ### Container erstellen:
 ```
