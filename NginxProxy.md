@@ -13,7 +13,7 @@ apt update && apt upgrade -y
 apt install curl -y
 ```
 ### Docker installieren:
-Falls es Probleme bei diesem Schritt gibt, schaut Mal in den ```DockerApparmor.ad``` Guide
+Falls es später Probleme mit Docker gibt, schaut Mal in den ```DockerApparmor.ad``` Guide
 ```
 curl -sSL https://get.docker.com | sh
 ```
