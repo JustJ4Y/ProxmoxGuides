@@ -1,6 +1,8 @@
 # Proxmox Monitoring mit Grafana
 Guide zum erstellen eines Grafana LXC Containers mit Hilfe von InfluxDB 2 und Docker
 
+## Installation
+
 ### Container erstellen:
 ```
 LXC - Ubuntu 24.04 (Unprivileged)
@@ -103,54 +105,91 @@ In Proxmox: Datacenter -> Metric Server -> Add -> InfluxDB
 | Bucket         | proxmox                    |
 | Token          | Write-Token hier einsetzen |  
 
-### CPU Query in Grafana erstellen:
+Jetzt sollte du soweit sein, dass du dein erstes Dashboard erstellen und dort die ersten Queries ausprobieren kannst.
+
+## Query
+
+### LXC CPU Auslastung Grafana:
+Display name: ${__field.labels.host}  
+Unit: Percent (0.0-1.0)
+```
+  from(bucket: "proxmox")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "system")
+  |> filter(fn: (r) => r["_field"] == "cpu")
+  |> filter(fn: (r) => r["object"] == "lxc")
+  |> filter(fn: (r) => r["_value"] > 0)
+  |> filter(fn: (r) => r["nodename"] == "proxmox")
+  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+//  |> yield(name: "mean
+```
+### LXC RAM Auslastung Grafana:
+Display name: ${__field.labels.host}  
+Unit: bytes(SI)
+```
+  from(bucket: "proxmox")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "system")
+  |> filter(fn: (r) => r["_field"] == "mem")
+  |> filter(fn: (r) => r["object"] == "lxc")
+  |> filter(fn: (r) => r["_value"] > 0)
+  |> filter(fn: (r) => r["nodename"] == "proxmox")
+  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+//  |> yield(name: "mean")
+```
+### LXC Netzwerk Auslastung Grafana:
+Display name: ${__field.labels.host}  
+Unit: bytes(SI)
 ```
 from(bucket: "proxmox")
- |> range(start: -1h)
- |> filter(fn: (r) => r["vmid"] =~ /^(100|101|102|103|105|106|107|108|109)$/)
- |> filter(fn: (r) => r["_field"] == "cpu")
- |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
- |> map(fn: (r) => ({
- r with
- _value: r._value * 100.0,
- _field:
- if r.vmid == "100" then "Server 0"
- else if r.vmid == "101" then "Server 1"
- else if r.vmid == "102" then "Server 2"
- else if r.vmid == "103" then "Server 3"
- else if r.vmid == "105" then "Server 4"
- else if r.vmid == "106" then "Server 5"
- else if r.vmid == "107" then "Server 6"
- else if r.vmid == "108" then "Server 7"
- else if r.vmid == "109" then "Server 8"
- else "Unbekannt"
- }))
- |> keep(columns: ["_time", "_value", "_field"])
- |> group(columns: ["_field"])
- |> yield(name: "CPU Dienste")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "system")
+  |> filter(fn: (r) => r["_field"] == "netin") or r["_field"] == "netout")
+  |> filter(fn: (r) => r["object"] == "lxc")
+  |> filter(fn: (r) => r["_value"] > 0)
+  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+  |> derivative(unit: 1s, nonNegative: true)
+//  |> yield(name: "mean")
 ```
-### RAM Query in Grafana erstellen:
+### CPU Host Auslastung in Prozent:
+Unit: Percent (0-100)
 ```
 from(bucket: "proxmox")
- |> range(start: -1h)
- |> filter(fn: (r) => r["vmid"] =~ /^(100|101|102|103|105|106|107|108|109)$/)
- |> filter(fn: (r) => r["_field"] == "mem")
- |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
- |> map(fn: (r) => ({
- r with
- _field:
- if r.vmid == "100" then "Server 0"
- else if r.vmid == "101" then "Server 1"
- else if r.vmid == "102" then "Server 2"
- else if r.vmid == "103" then "Server 3"
- else if r.vmid == "105" then "Server 4"
- else if r.vmid == "106" then "Server 5"
- else if r.vmid == "107" then "Server 6"
- else if r.vmid == "108" then "Server 7"
- else if r.vmid == "109" then "Server 8"
- else "Unbekannt"
- }))
- |> keep(columns: ["_time", "_value", "_field"])
- |> group(columns: ["_field"])
- |> yield(name: "RAM Dienste")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) =>
+    r._measurement == "cpustat" and
+    r._field == "cpu" and
+    r.host == "proxmox"
+  )
+  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+  |> map(fn: (r) => ({
+    r with
+    _value: r._value * 100.0,
+    _field: "CPU Auslastung"
+  }))
+  |> keep(columns: ["_time", "_value", "_field"])
+  |> yield(name: "CPU")
+  ```
+  ### RAM Host Auslastung in Prozent:  
+  Unit: Percent (0-100)  
+  ```
+  from(bucket: "proxmox")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) =>
+    r._measurement == "memory" and
+    (r._field == "memused" or r._field == "memtotal") and
+    r.host == "proxmox"
+  )
+  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)
+  |> pivot(
+    rowKey: ["_time"],
+    columnKey: ["_field"],
+    valueColumn: "_value"
+  )
+  |> map(fn: (r) => ({
+    r with _value: float(v: r.memused) / float(v: r.memtotal) * 100.0,
+    _field: "RAM Auslastung"
+  }))
+  |> keep(columns: ["_time", "_value", "_field"])
+  |> yield(name: "RAM")
 ```
