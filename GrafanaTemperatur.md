@@ -58,6 +58,24 @@ nano /etc/telegraf/telegraf.d/temperature.conf
 systemctl start telegraf
 ```
 ### Temperatur Query erstellen:
+Unit: Celsius (°C)
+```
+from(bucket: "temperatures")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "temp")
+  |> filter(fn: (r) =>
+    r["sensor"] == "coretemp_package_id_0"
+  )
+  |> map(fn: (r) => ({
+    r with
+    sensor_name: "CPU Gesamt"
+  }))
+  |> group(columns: ["sensor_name"])
+  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+  |> yield(name: "Temperaturen")
+```
+### Temperatur von jedem Kern anzeigen:
+Unit: Celsius (°C)
 ```
 from(bucket: "temperatures")
   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
@@ -82,4 +100,4 @@ from(bucket: "temperatures")
   |> group(columns: ["sensor_name"])
   |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
   |> yield(name: "Temperaturen")
-```
+``
