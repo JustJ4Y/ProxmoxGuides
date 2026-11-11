@@ -100,4 +100,4 @@ from(bucket: "temperatures")
   |> group(columns: ["sensor_name"])
   |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
   |> yield(name: "Temperaturen")
-``
+```
