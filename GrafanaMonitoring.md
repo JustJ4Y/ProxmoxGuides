@@ -63,7 +63,7 @@ InfluxDB im Browser öffnen unter Port 8086
 | Organization   | homelab        |
 | Bucket         | proxmox        |  
 
-Den initialen Token speichern. Für Proxmox später einen eigenen Write-Token erstellen.
+Den initialen Token speichern.
 
 ### Grafana Data Source einrichten:
 Grafana im Browser öffnen unter Port 3000  
