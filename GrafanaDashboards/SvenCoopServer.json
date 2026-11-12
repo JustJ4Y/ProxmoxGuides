@@ -5,8 +5,8 @@
     "name": "ad84x2g",
     "namespace": "default",
     "uid": "b31abeb1-500d-4a73-8360-82b71a29d7bc",
-    "resourceVersion": "1794486335527016",
-    "generation": 20,
+    "resourceVersion": "1794499878910003",
+    "generation": 22,
     "creationTimestamp": "2026-11-12T09:43:23Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "4122881414533120"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:afminmsuzhreoe",
       "grafana.app/saved-from-ui": "Grafana v13.3.0 (6f8ce3c693)",
       "grafana.app/updatedBy": "user:afminmsuzhreoe",
-      "grafana.app/updatedTimestamp": "2026-11-12T12:25:35Z"
+      "grafana.app/updatedTimestamp": "2026-11-12T16:11:18Z"
     }
   },
   "spec": {
@@ -315,7 +315,8 @@
                   },
                   "color": {
                     "mode": "thresholds"
-                  }
+                  },
+                  "fieldMinMax": false
                 },
                 "overrides": []
               }
@@ -1097,7 +1098,7 @@
               "x": 10,
               "y": 0,
               "width": 10,
-              "height": 25,
+              "height": 23,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-3"
@@ -1162,7 +1163,7 @@
               "x": 0,
               "y": 9,
               "width": 10,
-              "height": 8,
+              "height": 7,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-4"
@@ -1175,7 +1176,7 @@
               "x": 20,
               "y": 9,
               "width": 4,
-              "height": 8,
+              "height": 7,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-10"
@@ -1186,9 +1187,9 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 17,
+              "y": 16,
               "width": 10,
-              "height": 8,
+              "height": 7,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-5"
@@ -1199,9 +1200,9 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 20,
-              "y": 17,
+              "y": 16,
               "width": 4,
-              "height": 8,
+              "height": 7,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-11"
