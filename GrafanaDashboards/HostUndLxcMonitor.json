@@ -5,8 +5,8 @@
     "name": "adp5t4t",
     "namespace": "default",
     "uid": "71f71798-7a5e-4a34-8650-c8cc096bd337",
-    "resourceVersion": "1794471857730992",
-    "generation": 104,
+    "resourceVersion": "1794516843891008",
+    "generation": 116,
     "creationTimestamp": "2026-05-19T10:37:01Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "3044122641825792"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:afminmsuzhreoe",
       "grafana.app/saved-from-ui": "Grafana v13.3.0 (6f8ce3c693)",
       "grafana.app/updatedBy": "user:afminmsuzhreoe",
-      "grafana.app/updatedTimestamp": "2026-11-12T08:24:17Z"
+      "grafana.app/updatedTimestamp": "2026-11-12T20:54:03Z"
     }
   },
   "spec": {
@@ -395,6 +395,373 @@
                   }
                 },
                 "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-14": {
+        "kind": "Panel",
+        "spec": {
+          "id": 14,
+          "title": "LXC Container Auslatungen in Prozent",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "ffmiw3njywo3ke"
+                      },
+                      "spec": {
+                        "query": "from(bucket: \"proxmox\")\r\n  |> range(start: -5m)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\r\n  |> filter(fn: (r) => r[\"object\"] == \"lxc\")\r\n  |> filter(fn: (r) => r[\"nodename\"] == \"proxmox\")\r\n  |> filter(fn: (r) => \r\n      r[\"_field\"] == \"status\" or \r\n      r[\"_field\"] == \"cpu\" or \r\n      r[\"_field\"] == \"uptime\" or \r\n      r[\"_field\"] == \"mem\" or \r\n      r[\"_field\"] == \"maxmem\" or \r\n      r[\"_field\"] == \"disk\" or \r\n      r[\"_field\"] == \"maxdisk\" or\r\n      r[\"_field\"] == \"diskread\" or\r\n      r[\"_field\"] == \"diskwrite\" or\r\n      r[\"_field\"] == \"netin\" or\r\n      r[\"_field\"] == \"netout\"\r\n  )\r\n  |> last()\r\n  |> group(columns: [\"host\", \"vmid\", \"_field\"])\r\n  |> first()\r\n  |> pivot(rowKey: [\"host\", \"vmid\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> map(fn: (r) => ({\r\n      Container: if exists r.host then string(v: r.host) else \"Unbekannt\",\r\n      ID: if exists r.vmid then string(v: r.vmid) else \"-\",\r\n      Status: if exists r.status then string(v: r.status) else \"unknown\",\r\n      CPU: if exists r.cpu then float(v: r.cpu) * 100.0 else 0.0,\r\n      RAM: if exists r.mem and exists r.maxmem and float(v: r.maxmem) > 0.0 then (float(v: r.mem) / float(v: r.maxmem)) * 100.0 else 0.0,\r\n      DISK: if exists r.disk and exists r.maxdisk and float(v: r.maxdisk) > 0.0 then (float(v: r.disk) / float(v: r.maxdisk)) * 100.0 else 0.0,\r\n      Disk_Read: if exists r.diskread then float(v: r.diskread) else 0.0,\r\n      Disk_Write: if exists r.diskwrite then float(v: r.diskwrite) else 0.0,\r\n      Net_In: if exists r.netin then float(v: r.netin) else 0.0,\r\n      Net_Out: if exists r.netout then float(v: r.netout) else 0.0,\r\n      Uptime: if exists r.uptime then int(v: r.uptime) / 86400 else 0\r\n  }))\r\n  |> group()\r\n"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [
+                {
+                  "kind": "Transformation",
+                  "group": "organize",
+                  "spec": {
+                    "options": {
+                      "excludeByName": {
+                        "Disk_Read": true,
+                        "Disk_Write": true,
+                        "Net_In": true,
+                        "Net_Out": true
+                      },
+                      "includeByName": {},
+                      "indexByName": {
+                        "CPU": 3,
+                        "Container": 1,
+                        "DISK": 5,
+                        "Disk_Read": 6,
+                        "Disk_Write": 7,
+                        "ID": 0,
+                        "Net_In": 8,
+                        "Net_Out": 9,
+                        "RAM": 4,
+                        "Status": 2,
+                        "Uptime": 10
+                      },
+                      "renameByName": {
+                        "Disk_Read": "",
+                        "RAM": ""
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "Transformation",
+                  "group": "sortBy",
+                  "spec": {
+                    "options": {
+                      "fields": {},
+                      "sort": [
+                        {
+                          "field": "ID"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "13.3.0",
+            "spec": {
+              "options": {
+                "cellHeight": "sm",
+                "showHeader": true,
+                "sortBy": [],
+                "zebraStriping": false
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "footer": {
+                      "reducers": []
+                    },
+                    "inspect": false
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Status"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "type": "color-text"
+                        }
+                      },
+                      {
+                        "id": "mappings",
+                        "value": [
+                          {
+                            "options": {
+                              "running": {
+                                "color": "green",
+                                "index": 0
+                              },
+                              "stopped": {
+                                "color": "red",
+                                "index": 1
+                              }
+                            },
+                            "type": "value"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "custom.width",
+                        "value": 99
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "CPU"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "mode": "lcd",
+                          "type": "gauge",
+                          "valueDisplayMode": "color"
+                        }
+                      },
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      },
+                      {
+                        "id": "min",
+                        "value": 0
+                      },
+                      {
+                        "id": "max",
+                        "value": 100
+                      },
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "green",
+                              "value": 0
+                            },
+                            {
+                              "color": "#EAB839",
+                              "value": 70
+                            },
+                            {
+                              "color": "red",
+                              "value": 85
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "RAM"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "mode": "lcd",
+                          "type": "gauge",
+                          "valueDisplayMode": "color"
+                        }
+                      },
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      },
+                      {
+                        "id": "min",
+                        "value": 0
+                      },
+                      {
+                        "id": "max",
+                        "value": 100
+                      },
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "green",
+                              "value": 0
+                            },
+                            {
+                              "color": "#EAB839",
+                              "value": 70
+                            },
+                            {
+                              "color": "red",
+                              "value": 85
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "DISK"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "mode": "lcd",
+                          "type": "gauge",
+                          "valueDisplayMode": "color"
+                        }
+                      },
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      },
+                      {
+                        "id": "min",
+                        "value": 0
+                      },
+                      {
+                        "id": "max",
+                        "value": 100
+                      },
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "green",
+                              "value": 0
+                            },
+                            {
+                              "color": "#EAB839",
+                              "value": 70
+                            },
+                            {
+                              "color": "red",
+                              "value": 85
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Uptime"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "d"
+                      },
+                      {
+                        "id": "custom.width",
+                        "value": 75
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "ID"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 67
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Container"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 133
+                      }
+                    ]
+                  }
+                ]
               }
             }
           }
@@ -1369,6 +1736,19 @@
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-13"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 24,
+              "width": 24,
+              "height": 18,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-14"
               }
             }
           }
