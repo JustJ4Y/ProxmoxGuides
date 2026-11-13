@@ -5,8 +5,8 @@
     "name": "ad84x2g",
     "namespace": "default",
     "uid": "b31abeb1-500d-4a73-8360-82b71a29d7bc",
-    "resourceVersion": "1794559104398980",
-    "generation": 30,
+    "resourceVersion": "1794559218482007",
+    "generation": 31,
     "creationTimestamp": "2026-11-12T09:43:23Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "4122881414533120"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:afminmsuzhreoe",
       "grafana.app/saved-from-ui": "Grafana v13.3.0 (6f8ce3c693)",
       "grafana.app/updatedBy": "user:afminmsuzhreoe",
-      "grafana.app/updatedTimestamp": "2026-11-13T08:38:24Z"
+      "grafana.app/updatedTimestamp": "2026-11-13T08:40:18Z"
     }
   },
   "spec": {
@@ -312,7 +312,7 @@
                       },
                       {
                         "value": 80,
-                        "color": "dark-red"
+                        "color": "red"
                       }
                     ]
                   },
