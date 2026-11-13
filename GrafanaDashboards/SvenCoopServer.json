@@ -5,8 +5,8 @@
     "name": "ad84x2g",
     "namespace": "default",
     "uid": "b31abeb1-500d-4a73-8360-82b71a29d7bc",
-    "resourceVersion": "1794521527773991",
-    "generation": 26,
+    "resourceVersion": "1794557863709995",
+    "generation": 28,
     "creationTimestamp": "2026-11-12T09:43:23Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "4122881414533120"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:afminmsuzhreoe",
       "grafana.app/saved-from-ui": "Grafana v13.3.0 (6f8ce3c693)",
       "grafana.app/updatedBy": "user:afminmsuzhreoe",
-      "grafana.app/updatedTimestamp": "2026-11-12T22:12:07Z"
+      "grafana.app/updatedTimestamp": "2026-11-13T08:17:43Z"
     }
   },
   "spec": {
@@ -428,7 +428,7 @@
                         "name": "ffmiw3njywo3ke"
                       },
                       "spec": {
-                        "query": "from(bucket: \"svencoop\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sc_server\" and r._field == \"players\" and r._value > 0)\n  |> group(columns: [\"map\"])\n  |> count()\n  // Jede Abfrage entspricht 15 Sekunden -> Umrechnung in Minuten (/ 4)\n  |> map(fn: (r) => ({ r with Minuten: float(v: r._value) * 15.0 / 60.0 }))\n  |> keep(columns: [\"map\", \"Minuten\"])\n  |> group()\n  |> sort(columns: [\"Minuten\"], desc: true)\n  |> limit(n: 15)\n"
+                        "query": "from(bucket: \"svencoop\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"sc_server\" and r._field == \"players\" and r._value > 0)\n  |> group(columns: [\"map\"])\n  |> count()\n  // Jede Abfrage entspricht 15 Sekunden -> Umrechnung in Minuten (/ 4)\n  |> map(fn: (r) => ({ r with Minuten: float(v: r._value) * 15.0 / 60.0 }))\n  |> keep(columns: [\"map\", \"Minuten\"])\n  |> group()\n  |> sort(columns: [\"Minuten\"], desc: true)\n  |> limit(n: 20)\n"
                       }
                     },
                     "refId": "A",
@@ -476,6 +476,7 @@
                 "reduceOptions": {
                   "calcs": [],
                   "fields": "",
+                  "limit": 20,
                   "values": true
                 },
                 "showUnfilled": true,
@@ -536,7 +537,7 @@
                         "name": "ffmiw3njywo3ke"
                       },
                       "spec": {
-                        "query": "import \"math\"\n\nfrom(bucket: \"svencoop\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sc_players\" and r._field == \"score\")\n  |> group(columns: [\"player\"])\n  |> count()\n  // Umrechnung in Stunden (* 15 Sek / 3600)\n  |> map(fn: (r) => ({ r with Stunden: math.round(x: (float(v: r._value) * 15.0 / 3600.0) * 10.0) / 10.0 }))\n  |> keep(columns: [\"player\", \"Stunden\"])\n  |> group()\n  |> sort(columns: [\"Stunden\"], desc: true)\n\n"
+                        "query": "import \"math\"\n\nfrom(bucket: \"svencoop\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"sc_players\" and r._field == \"score\")\n  |> group(columns: [\"player\"])\n  |> count()\n  // Umrechnung in Stunden (* 15 Sek / 3600)\n  |> map(fn: (r) => ({ r with Stunden: math.round(x: (float(v: r._value) * 15.0 / 3600.0) * 10.0) / 10.0 }))\n  |> keep(columns: [\"player\", \"Stunden\"])\n  |> group()\n  |> sort(columns: [\"Stunden\"], desc: true)\n\n"
                       }
                     },
                     "refId": "A",
@@ -587,6 +588,7 @@
                 "reduceOptions": {
                   "calcs": [],
                   "fields": "",
+                  "limit": 4,
                   "values": true
                 },
                 "showUnfilled": true,
@@ -598,20 +600,19 @@
                 "defaults": {
                   "unit": "h",
                   "decimals": 0,
-                  "max": 600,
                   "thresholds": {
-                    "mode": "absolute",
+                    "mode": "percentage",
                     "steps": [
                       {
                         "value": 0,
                         "color": "green"
                       },
                       {
-                        "value": 400,
+                        "value": 80,
                         "color": "#EAB839"
                       },
                       {
-                        "value": 500,
+                        "value": 90,
                         "color": "red"
                       }
                     ]
@@ -648,7 +649,7 @@
                         "name": "ffmiw3njywo3ke"
                       },
                       "spec": {
-                        "query": "from(bucket: \"svencoop\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sc_players\" and r._field == \"score\")\n  // Nur nach Spieler gruppieren (ignoriert den map-Tag!)\n  |> group(columns: [\"player\"])\n  // Berechnet den gesamten Punktezuwachs inkl. automatischer Reset-Erkennung bei Map-Wechseln\n  |> increase()\n  // Letzten (höchsten) Gesamtwert pro Spieler nehmen\n  |> last()\n  |> keep(columns: [\"player\", \"_value\"])\n  |> rename(columns: {_value: \"Gesamtpunkte\"})\n  |> group()\n  |> sort(columns: [\"Gesamtpunkte\"], desc: true)\n"
+                        "query": "from(bucket: \"svencoop\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"sc_players\" and r._field == \"score\")\n  // Nur nach Spieler gruppieren (ignoriert den map-Tag!)\n  |> group(columns: [\"player\"])\n  // Berechnet den gesamten Punktezuwachs inkl. automatischer Reset-Erkennung bei Map-Wechseln\n  |> increase()\n  // Letzten (höchsten) Gesamtwert pro Spieler nehmen\n  |> last()\n  |> keep(columns: [\"player\", \"_value\"])\n  |> rename(columns: {_value: \"Gesamtpunkte\"})\n  |> group()\n  |> sort(columns: [\"Gesamtpunkte\"], desc: true)\n"
                       }
                     },
                     "refId": "A",
@@ -669,7 +670,7 @@
                         "player": 0
                       },
                       "renameByName": {
-                        "Gesamtpunkte": "Punkte",
+                        "Gesamtpunkte": "",
                         "player": "Spieler"
                       }
                     }
@@ -700,6 +701,7 @@
                 "reduceOptions": {
                   "calcs": [],
                   "fields": "",
+                  "limit": 4,
                   "values": true
                 },
                 "showUnfilled": true,
@@ -709,20 +711,19 @@
               },
               "fieldConfig": {
                 "defaults": {
-                  "max": 600000,
                   "thresholds": {
-                    "mode": "absolute",
+                    "mode": "percentage",
                     "steps": [
                       {
                         "value": 0,
                         "color": "green"
                       },
                       {
-                        "value": 400000,
+                        "value": 80,
                         "color": "#EAB839"
                       },
                       {
-                        "value": 500000,
+                        "value": 90,
                         "color": "red"
                       }
                     ]
@@ -842,7 +843,7 @@
                         "name": "ffmiw3njywo3ke"
                       },
                       "spec": {
-                        "query": "from(bucket: \"svencoop\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sc_server\" and r._field == \"players\" and r._value > 0)\n  |> group()\n  |> count()\n  // Jede Abfrage entspricht 15 Sekunden -> Ausgabe als Ganzzahl (uint) in Sekunden\n  |> map(fn: (r) => ({ r with _value: uint(v: r._value * 15) }))\n"
+                        "query": "from(bucket: \"svencoop\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"sc_server\" and r._field == \"players\" and r._value > 0)\n  |> group()\n  |> count()\n  // Jede Abfrage entspricht 15 Sekunden -> Ausgabe als Ganzzahl (uint) in Sekunden\n  |> map(fn: (r) => ({ r with _value: uint(v: r._value * 15) }))\n"
                       }
                     },
                     "refId": "A",
@@ -1176,9 +1177,9 @@
     "tags": [],
     "timeSettings": {
       "timezone": "browser",
-      "from": "now-30m",
+      "from": "now-1h",
       "to": "now",
-      "autoRefresh": "",
+      "autoRefresh": "auto",
       "autoRefreshIntervals": [
         "5s",
         "10s",
