@@ -5,8 +5,8 @@
     "name": "ad84x2g",
     "namespace": "default",
     "uid": "b31abeb1-500d-4a73-8360-82b71a29d7bc",
-    "resourceVersion": "1794559218482007",
-    "generation": 31,
+    "resourceVersion": "1794565143480004",
+    "generation": 35,
     "creationTimestamp": "2026-11-12T09:43:23Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "4122881414533120"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:afminmsuzhreoe",
       "grafana.app/saved-from-ui": "Grafana v13.3.0 (6f8ce3c693)",
       "grafana.app/updatedBy": "user:afminmsuzhreoe",
-      "grafana.app/updatedTimestamp": "2026-11-13T08:40:18Z"
+      "grafana.app/updatedTimestamp": "2026-11-13T10:19:03Z"
     }
   },
   "spec": {
@@ -413,7 +413,7 @@
         "kind": "Panel",
         "spec": {
           "id": 3,
-          "title": "Karten nach Spielzeit",
+          "title": "Karten Spielzeit",
           "description": "",
           "links": [],
           "data": {
@@ -431,7 +431,7 @@
                         "name": "ffmiw3njywo3ke"
                       },
                       "spec": {
-                        "query": "from(bucket: \"svencoop\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"sc_server\" and r._field == \"players\" and r._value > 0)\n  |> group(columns: [\"map\"])\n  |> count()\n  // Jede Abfrage entspricht 15 Sekunden -> Umrechnung in Minuten (/ 4)\n  |> map(fn: (r) => ({ r with Minuten: float(v: r._value) * 15.0 / 60.0 }))\n  |> keep(columns: [\"map\", \"Minuten\"])\n  |> group()\n  |> sort(columns: [\"Minuten\"], desc: true)\n  |> limit(n: 20)\n"
+                        "query": "from(bucket: \"svencoop\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"sc_server\" and r._field == \"players\" and r._value > 0)\n  |> group(columns: [\"map\"])\n  |> count()\n  // Jede Abfrage entspricht 15 Sekunden -> Umrechnung in Minuten (/ 4)\n  |> map(fn: (r) => ({ r with Minuten: float(v: r._value) * 15.0 / 60.0 }))\n  |> keep(columns: [\"map\", \"Minuten\"])\n  |> group()\n  |> sort(columns: [\"Minuten\"], desc: true)\n"
                       }
                     },
                     "refId": "A",
@@ -471,19 +471,18 @@
                   "placement": "bottom",
                   "showLegend": false
                 },
-                "maxVizHeight": 300,
-                "minVizHeight": 16,
+                "maxVizHeight": 70,
+                "minVizHeight": 70,
                 "minVizWidth": 8,
                 "namePlacement": "auto",
                 "orientation": "horizontal",
                 "reduceOptions": {
                   "calcs": [],
                   "fields": "",
-                  "limit": 20,
                   "values": true
                 },
                 "showUnfilled": true,
-                "sizing": "auto",
+                "sizing": "manual",
                 "textMode": "auto",
                 "valueMode": "color"
               },
@@ -522,7 +521,7 @@
         "kind": "Panel",
         "spec": {
           "id": 4,
-          "title": "Spieler nach Spielzeit",
+          "title": "Spielzeit",
           "description": "",
           "links": [],
           "data": {
@@ -583,19 +582,18 @@
                   "placement": "bottom",
                   "showLegend": false
                 },
-                "maxVizHeight": 300,
-                "minVizHeight": 16,
+                "maxVizHeight": 70,
+                "minVizHeight": 70,
                 "minVizWidth": 8,
                 "namePlacement": "auto",
                 "orientation": "horizontal",
                 "reduceOptions": {
                   "calcs": [],
                   "fields": "",
-                  "limit": 4,
                   "values": true
                 },
                 "showUnfilled": true,
-                "sizing": "auto",
+                "sizing": "manual",
                 "textMode": "auto",
                 "valueMode": "color"
               },
@@ -634,7 +632,7 @@
         "kind": "Panel",
         "spec": {
           "id": 5,
-          "title": "Spieler Gesamtpunkte",
+          "title": "Gesamtpunkte",
           "description": "",
           "links": [],
           "data": {
@@ -696,24 +694,24 @@
                   "placement": "bottom",
                   "showLegend": false
                 },
-                "maxVizHeight": 300,
-                "minVizHeight": 16,
+                "maxVizHeight": 70,
+                "minVizHeight": 70,
                 "minVizWidth": 8,
                 "namePlacement": "auto",
                 "orientation": "horizontal",
                 "reduceOptions": {
                   "calcs": [],
                   "fields": "",
-                  "limit": 4,
                   "values": true
                 },
                 "showUnfilled": true,
-                "sizing": "auto",
+                "sizing": "manual",
                 "textMode": "auto",
                 "valueMode": "color"
               },
               "fieldConfig": {
                 "defaults": {
+                  "unit": "pts.",
                   "thresholds": {
                     "mode": "percentage",
                     "steps": [
