@@ -5,8 +5,8 @@
     "name": "ad84x2g",
     "namespace": "default",
     "uid": "b31abeb1-500d-4a73-8360-82b71a29d7bc",
-    "resourceVersion": "1794565143480004",
-    "generation": 35,
+    "resourceVersion": "1794607226978999",
+    "generation": 38,
     "creationTimestamp": "2026-11-12T09:43:23Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "4122881414533120"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:afminmsuzhreoe",
       "grafana.app/saved-from-ui": "Grafana v13.3.0 (6f8ce3c693)",
       "grafana.app/updatedBy": "user:afminmsuzhreoe",
-      "grafana.app/updatedTimestamp": "2026-11-13T10:19:03Z"
+      "grafana.app/updatedTimestamp": "2026-11-13T22:00:26Z"
     }
   },
   "spec": {
@@ -488,7 +488,7 @@
               },
               "fieldConfig": {
                 "defaults": {
-                  "unit": "m",
+                  "unit": "min.",
                   "decimals": 0,
                   "thresholds": {
                     "mode": "percentage",
@@ -599,7 +599,7 @@
               },
               "fieldConfig": {
                 "defaults": {
-                  "unit": "h",
+                  "unit": "hours",
                   "decimals": 0,
                   "thresholds": {
                     "mode": "percentage",
@@ -650,7 +650,7 @@
                         "name": "ffmiw3njywo3ke"
                       },
                       "spec": {
-                        "query": "from(bucket: \"svencoop\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"sc_players\" and r._field == \"score\")\n  // Nur nach Spieler gruppieren (ignoriert den map-Tag!)\n  |> group(columns: [\"player\"])\n  // Berechnet den gesamten Punktezuwachs inkl. automatischer Reset-Erkennung bei Map-Wechseln\n  |> increase()\n  // Letzten (höchsten) Gesamtwert pro Spieler nehmen\n  |> last()\n  |> keep(columns: [\"player\", \"_value\"])\n  |> rename(columns: {_value: \"Gesamtpunkte\"})\n  |> group()\n  |> sort(columns: [\"Gesamtpunkte\"], desc: true)\n"
+                        "query": "from(bucket: \"svencoop\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"sc_players\" and r._field == \"score\" and r._value <= 10000)\n  |> group(columns: [\"player\"])\n  |> sort(columns: [\"_time\"], desc: false)\n  // Berechnet nur die Differenz zum vorherigen Messpunkt (ignoriert Abfälle auf 0)\n  |> difference(nonNegative: true)\n  // Filtert den fehlerhaften Rücksprung von 0 auf den alten Punktestand heraus (z. B. > 250 Punkte in 15 Sek.)\n  |> filter(fn: (r) => r._value <= 250)\n  // Alle validen Punktezuwächse zusammenzählen\n  |> sum()\n  |> keep(columns: [\"player\", \"_value\"])\n  |> rename(columns: {_value: \"Gesamtpunkte\"})\n  |> group()\n  |> sort(columns: [\"Gesamtpunkte\"], desc: true)\n"
                       }
                     },
                     "refId": "A",
