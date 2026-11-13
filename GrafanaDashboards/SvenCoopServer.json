@@ -5,8 +5,8 @@
     "name": "ad84x2g",
     "namespace": "default",
     "uid": "b31abeb1-500d-4a73-8360-82b71a29d7bc",
-    "resourceVersion": "1794557863709995",
-    "generation": 28,
+    "resourceVersion": "1794559104398980",
+    "generation": 30,
     "creationTimestamp": "2026-11-12T09:43:23Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "4122881414533120"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:afminmsuzhreoe",
       "grafana.app/saved-from-ui": "Grafana v13.3.0 (6f8ce3c693)",
       "grafana.app/updatedBy": "user:afminmsuzhreoe",
-      "grafana.app/updatedTimestamp": "2026-11-13T08:17:43Z"
+      "grafana.app/updatedTimestamp": "2026-11-13T08:38:24Z"
     }
   },
   "spec": {
@@ -291,24 +291,27 @@
                 "showThresholdMarkers": true,
                 "sizing": "auto",
                 "sparkline": true,
+                "text": {},
                 "textMode": "auto"
               },
               "fieldConfig": {
                 "defaults": {
                   "unit": "decbytes",
+                  "min": 0,
+                  "max": 429496796,
                   "thresholds": {
-                    "mode": "absolute",
+                    "mode": "percentage",
                     "steps": [
                       {
                         "value": 0,
                         "color": "green"
                       },
                       {
-                        "value": 419430400,
+                        "value": 60,
                         "color": "#EAB839"
                       },
                       {
-                        "value": 629145600,
+                        "value": 80,
                         "color": "dark-red"
                       }
                     ]
@@ -922,7 +925,7 @@
                         "name": "ffmiw3njywo3ke"
                       },
                       "spec": {
-                        "query": "from(bucket: \"svencoop\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sc_server\" and r._field == \"players\")\n  // Alle Maps zusammenfassen, damit eine durchgehende Linie entsteht\n  |> group()\n  // Glättet die Daten je nach gewähltem Zeitraum (nimmt den Höchstwert pro Intervall)\n  |> aggregateWindow(every: v.windowPeriod, fn: max, createEmpty: true)\n  |> fill(value: 0)\n"
+                        "query": "from(bucket: \"svencoop\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sc_server\" and r._field == \"players\")\n  // Alle Maps zusammenfassen und zwingend chronologisch sortieren\n  |> group()\n  |> sort(columns: [\"_time\"], desc: false)\n  // Intervall auf mindestens 15s (dein Poll-Intervall) halten und keine leeren Fenster mit 0 füllen\n  |> aggregateWindow(every: v.windowPeriod, fn: max, createEmpty: false)\n"
                       }
                     },
                     "refId": "A",
