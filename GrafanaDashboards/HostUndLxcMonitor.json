@@ -5,8 +5,8 @@
     "name": "adp5t4t",
     "namespace": "default",
     "uid": "71f71798-7a5e-4a34-8650-c8cc096bd337",
-    "resourceVersion": "1794516843891008",
-    "generation": 116,
+    "resourceVersion": "1795087930358000",
+    "generation": 118,
     "creationTimestamp": "2026-05-19T10:37:01Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "3044122641825792"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:afminmsuzhreoe",
       "grafana.app/saved-from-ui": "Grafana v13.3.0 (6f8ce3c693)",
       "grafana.app/updatedBy": "user:afminmsuzhreoe",
-      "grafana.app/updatedTimestamp": "2026-11-12T20:54:03Z"
+      "grafana.app/updatedTimestamp": "2026-11-19T11:32:10Z"
     }
   },
   "spec": {
@@ -191,7 +191,8 @@
               },
               "fieldConfig": {
                 "defaults": {
-                  "unit": "d",
+                  "unit": "days",
+                  "decimals": 1,
                   "thresholds": {
                     "mode": "absolute",
                     "steps": [
@@ -727,7 +728,7 @@
                     "properties": [
                       {
                         "id": "unit",
-                        "value": "d"
+                        "value": "days"
                       },
                       {
                         "id": "custom.width",
@@ -1761,9 +1762,9 @@
     "tags": [],
     "timeSettings": {
       "timezone": "browser",
-      "from": "now-6h",
+      "from": "now-1h",
       "to": "now",
-      "autoRefresh": "",
+      "autoRefresh": "auto",
       "autoRefreshIntervals": [
         "5s",
         "10s",
