@@ -5,8 +5,8 @@
     "name": "ad84x2g",
     "namespace": "default",
     "uid": "b31abeb1-500d-4a73-8360-82b71a29d7bc",
-    "resourceVersion": "1794607226978999",
-    "generation": 38,
+    "resourceVersion": "1795040252322019",
+    "generation": 40,
     "creationTimestamp": "2026-11-12T09:43:23Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "4122881414533120"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:afminmsuzhreoe",
       "grafana.app/saved-from-ui": "Grafana v13.3.0 (6f8ce3c693)",
       "grafana.app/updatedBy": "user:afminmsuzhreoe",
-      "grafana.app/updatedTimestamp": "2026-11-13T22:00:26Z"
+      "grafana.app/updatedTimestamp": "2026-11-18T22:17:32Z"
     }
   },
   "spec": {
@@ -327,6 +327,175 @@
           }
         }
       },
+      "panel-12": {
+        "kind": "Panel",
+        "spec": {
+          "id": 12,
+          "title": "Heatmap",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "ffmiw3njywo3ke"
+                      },
+                      "spec": {
+                        "query": "import \"date\"\nimport \"timezone\"\nimport \"array\"\n\noption location = timezone.location(name: \"Europe/Berlin\")\n\n// 1. Echte Spielzeiten auslesen\nechteDaten = from(bucket: \"svencoop\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"sc_server\" and r._field == \"players\" and r._value > 0)\n  |> group()\n  |> map(fn: (r) => ({\n      r with\n      StundeNr: date.hour(t: r._time),\n      TagNr: date.weekDay(t: r._time)\n  }))\n  |> group(columns: [\"TagNr\", \"StundeNr\"])\n  |> count()\n  |> map(fn: (r) => ({ r with Minuten: float(v: r._value) * 15.0 / 60.0 }))\n  |> keep(columns: [\"TagNr\", \"StundeNr\", \"Minuten\"])\n\n// 2. Leeres Raster mit Dummy-Spalte (k: 1) für den Join erzeugen\ntage = array.from(rows: [\n  {k: 1, TagNr: 1}, {k: 1, TagNr: 2}, {k: 1, TagNr: 3}, {k: 1, TagNr: 4},\n  {k: 1, TagNr: 5}, {k: 1, TagNr: 6}, {k: 1, TagNr: 0}\n])\nstunden = array.from(rows: [\n  {k: 1, StundeNr: 0}, {k: 1, StundeNr: 1}, {k: 1, StundeNr: 2}, {k: 1, StundeNr: 3},\n  {k: 1, StundeNr: 4}, {k: 1, StundeNr: 5}, {k: 1, StundeNr: 6}, {k: 1, StundeNr: 7},\n  {k: 1, StundeNr: 8}, {k: 1, StundeNr: 9}, {k: 1, StundeNr: 10}, {k: 1, StundeNr: 11},\n  {k: 1, StundeNr: 12}, {k: 1, StundeNr: 13}, {k: 1, StundeNr: 14}, {k: 1, StundeNr: 15},\n  {k: 1, StundeNr: 16}, {k: 1, StundeNr: 17}, {k: 1, StundeNr: 18}, {k: 1, StundeNr: 19},\n  {k: 1, StundeNr: 20}, {k: 1, StundeNr: 21}, {k: 1, StundeNr: 22}, {k: 1, StundeNr: 23}\n])\n\nraster = join(tables: {t: tage, s: stunden}, on: [\"k\"])\n  |> map(fn: (r) => ({ TagNr: r.TagNr, StundeNr: r.StundeNr, Minuten: 0.0 }))\n\n// 3. Echte Daten und Raster zusammenführen, aufsummieren und exakt sortieren\nunion(tables: [raster, echteDaten])\n  |> group(columns: [\"TagNr\", \"StundeNr\"])\n  |> sum(column: \"Minuten\")\n  |> group()\n  |> map(fn: (r) => ({\n      r with\n      SortTag: if r.TagNr == 0 then 7 else r.TagNr,\n      Wochentag: if r.TagNr == 1 then \"Montag\"\n                 else if r.TagNr == 2 then \"Dienstag\"\n                 else if r.TagNr == 3 then \"Mittwoch\"\n                 else if r.TagNr == 4 then \"Donnerstag\"\n                 else if r.TagNr == 5 then \"Freitag\"\n                 else if r.TagNr == 6 then \"Samstag\"\n                 else \"Sonntag\",\n      Stunde: if r.StundeNr < 10 then \"0\" + string(v: r.StundeNr) else string(v: r.StundeNr)\n  }))\n  |> sort(columns: [\"SortTag\", \"Stunde\"], desc: false)\n  |> keep(columns: [\"Wochentag\", \"Stunde\", \"Minuten\"])\n"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [
+                {
+                  "kind": "Transformation",
+                  "group": "groupingToMatrix",
+                  "spec": {
+                    "options": {
+                      "columnField": "Stunde",
+                      "rowField": "Wochentag",
+                      "valueField": "Minuten"
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "13.3.0",
+            "spec": {
+              "options": {
+                "cellHeight": "lg",
+                "enablePagination": false,
+                "showHeader": true,
+                "zebraStriping": false
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "decimals": 0,
+                  "min": 0,
+                  "thresholds": {
+                    "mode": "percentage",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 60,
+                        "color": "#EAB839"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "continuous-greens"
+                  },
+                  "custom": {
+                    "align": "center",
+                    "cellOptions": {
+                      "applyToRow": false,
+                      "mode": "basic",
+                      "type": "color-background"
+                    },
+                    "filterable": false,
+                    "footer": {
+                      "reducers": []
+                    },
+                    "inspect": false,
+                    "minWidth": 50,
+                    "wrapHeaderText": false,
+                    "wrapText": false
+                  },
+                  "fieldMinMax": false
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Wochentag\\Stunde"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 150
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "/.*/"
+                    },
+                    "properties": [
+                      {
+                        "id": "mappings",
+                        "value": [
+                          {
+                            "options": {
+                              "0": {
+                                "index": 0,
+                                "text": "⠀"
+                              },
+                              "Dienstag": {
+                                "color": "transparent",
+                                "index": 2
+                              },
+                              "Donnerstag": {
+                                "color": "transparent",
+                                "index": 4
+                              },
+                              "Freitag": {
+                                "color": "transparent",
+                                "index": 5
+                              },
+                              "Mittwoch": {
+                                "color": "transparent",
+                                "index": 3
+                              },
+                              "Montag": {
+                                "color": "transparent",
+                                "index": 1
+                              },
+                              "Samstag": {
+                                "color": "transparent",
+                                "index": 6
+                              },
+                              "Sonntag": {
+                                "color": "transparent",
+                                "index": 7
+                              }
+                            },
+                            "type": "value"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
       "panel-2": {
         "kind": "Panel",
         "spec": {
@@ -431,7 +600,7 @@
                         "name": "ffmiw3njywo3ke"
                       },
                       "spec": {
-                        "query": "from(bucket: \"svencoop\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"sc_server\" and r._field == \"players\" and r._value > 0)\n  |> group(columns: [\"map\"])\n  |> count()\n  // Jede Abfrage entspricht 15 Sekunden -> Umrechnung in Minuten (/ 4)\n  |> map(fn: (r) => ({ r with Minuten: float(v: r._value) * 15.0 / 60.0 }))\n  |> keep(columns: [\"map\", \"Minuten\"])\n  |> group()\n  |> sort(columns: [\"Minuten\"], desc: true)\n"
+                        "query": "import \"strings\"\n\nfrom(bucket: \"svencoop\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"sc_server\" and r._field == \"players\" and r._value > 0)\n  |> map(fn: (r) => ({ r with map: strings.toLower(v: r.map) }))\n  |> group(columns: [\"map\"])\n  |> count()\n  // Jede Abfrage entspricht 15 Sekunden -> Umrechnung in Minuten (/ 4)\n  |> map(fn: (r) => ({ r with Minuten: float(v: r._value) * 15.0 / 60.0 }))\n  |> keep(columns: [\"map\", \"Minuten\"])\n  |> group()\n  |> sort(columns: [\"Minuten\"], desc: true)\n"
                       }
                     },
                     "refId": "A",
@@ -1166,6 +1335,19 @@
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-11"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 23,
+              "width": 24,
+              "height": 12,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-12"
               }
             }
           }
